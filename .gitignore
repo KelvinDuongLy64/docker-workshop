@@ -3,6 +3,8 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
 
+*.parquet
+
 # User-specific files
 *.rsuser
 *.suo
@@ -427,3 +429,20 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+
+# Python Virtual Environments
+venv/
+env/
+.venv/
+.env/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Testing
+.pytest_cache/
+.coverage
+
+# Jupyter
+.ipynb_checkpoints/
