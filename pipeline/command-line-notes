@@ -1,0 +1,37 @@
+// Run this to create docker network (once only)
+docker network create pg-network
+
+// Run this to start postgressql
+docker run -it --rm \
+  -e POSTGRES_USER="root" \
+  -e POSTGRES_PASSWORD="root" \
+  -e POSTGRES_DB="ny_taxi" \
+  -v ny_taxi_postgres_data:/var/lib/postgresql \
+  -p 5432:5432 \
+  --network=pg-network \
+  --name pgdatabase \
+  postgres:18
+
+// Run this to start pgAdmin (optional but recommended) (run 'docker rm pgadmin' if pgadmin already exists)
+docker run -it \
+  -e PGADMIN_DEFAULT_EMAIL="admin@admin.com" \
+  -e PGADMIN_DEFAULT_PASSWORD="root" \
+  -v pgadmin_data:/var/lib/pgadmin \
+  -p 8085:80 \
+  --network=pg-network \
+  --name pgadmin \
+  dpage/pgadmin4
+
+// Run this to test PostgreSQL with pcgli
+uv run pgcli -h localhost -p 5432 -u root -d ny_taxi
+
+docker run -it --rm \
+--network=pipeline_default \
+taxi_ingest:v001 \
+  --pg-user=root \
+  --pg-pass=root \
+  --pg-host=pgdatabase \
+  --pg-port=5432 \
+  --pg-db=ny_taxi \
+  --target-table=yellow_taxi_trips
+  --chunksize=100000
